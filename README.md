@@ -40,9 +40,65 @@ The expression that use in needs to be `Comparable`
 
 ### Chapter 3: Function declaration and invokation
 #### multi-tupled return values
+tupled return is possible
 ```
 for ((index, element) in collection.withIndex()) {
   if (index > 0) result.append(separator)
   result.append(element)
 }
 ```
+
+#### @JvmOverloads
+The annotation auto-generates Functions in Java that skips each parameter declaration starting from the last one to the first.
+Each skipped parameter would use default parameter declared in Kotlin.
+```
+@JvmOverloads
+fun <T> joinToString(
+  collection:Collection<T>
+  separator: String = ", ",
+  prefix: String = ""
+): String
+
+String joinToString(Collection<T> collection, String separator, String prefix);
+String joinToString(Collection<T> collection, String separator);
+String joinToString(Collection<T> collection);
+```
+
+#### @file:JvmName
+This annotation lets you choose the class name mapped in Java
+```
+@file:JvmName("StringFunctions")
+package strings
+fun joinToString(...): String { ... }
+
+/* Java */
+import strings.StringFunctions;
+StringFunctions.joinToString(list, ...)
+```
+
+#### Extension Functions cannot be overriden
+
+#### If a signature of member function and extension functions are the same, the member function has the precedence, meaning member function will be called.
+
+#### Handling Paired values, infixes, and destructuring declaration
+```
+1.to("one") //is equivalent to 
+1 to "one"
+
+infix fun Any.to(other: Any) = Pair(this, other)
+
+val (number, name) = 1 to "one"
+```
+
+#### Local functions
+```
+fun saveUser(user: User) {
+  fun validate(value: String, fieldName: String) {
+    println("${user.id} has $value for @fieldName") // has reference to outer function
+  }
+  validate(user.name, "Name")
+  validate(user.address, "Address")
+}
+```
+
+
